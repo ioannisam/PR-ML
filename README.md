@@ -14,7 +14,7 @@ cd PR-ML
 ```
 3. Install required Python packages 
 ```
-pip install -r requirements.txt 
+pip install -r etc/requirements.txt 
 ```
 
 ## Usage

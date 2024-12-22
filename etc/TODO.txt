@@ -1,0 +1,3 @@
+- fine tune parameters to boost accuracy for each model in part D
+- check the entire codebase
+- create report
