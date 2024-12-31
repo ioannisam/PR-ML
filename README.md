@@ -1,5 +1,10 @@
 # Pattern Recognition and Machine Learning (PR-ML) 
-This repository contains the code and resources for the Pattern Recognition and Machine Learning project. 
+
+**Authors**: Ioannis Michalainas, Maria Charisi
+
+**Date**: December 2024
+
+This repository contains the code and resources for the `Pattern Recognition and Machine Learning` project. 
 The focus of this project is on implementing and experimenting with various machine learning algorithms and pattern recognition techniques. 
 
 ## Installation

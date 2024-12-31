@@ -1,0 +1,2 @@
+Best parameters found: {'bootstrap': False, 'class_weight': 'balanced', 'criterion': 'entropy', 'max_depth': 20, 'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 500}
+Best cross-validation accuracy: 0.83

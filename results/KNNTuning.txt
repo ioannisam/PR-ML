@@ -1,0 +1,2 @@
+Best parameters found: {'algorithm': 'auto', 'metric': 'cosine', 'n_neighbors': 9, 'p': 1, 'weights': 'distance'}
+Best cross-validation accuracy: 0.83
