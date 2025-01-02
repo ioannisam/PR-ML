@@ -21,11 +21,11 @@ X_train_scaled = scaler.fit_transform(X_train)
 
 # Define the parameter grid to search
 param_grid = {
-    'knn__n_neighbors': [3, 5, 7, 9, 11],
-    'knn__weights': ['uniform', 'distance'],
-    'knn__metric': ['euclidean', 'manhattan', 'minkowski', 'cosine'],
-    'knn__p': [1, 2],
-    'knn__algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']
+    'n_neighbors': [3, 5, 7, 9, 11],
+    'weights': ['uniform', 'distance'],
+    'metric': ['euclidean', 'manhattan', 'minkowski', 'cosine'],
+    'p': [1, 2],
+    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']
 }
 
 # Initialize the KNeighborsClassifier

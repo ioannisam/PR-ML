@@ -1,7 +1,31 @@
 \documentclass{beamer}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{PythonStyle}{
+    language=Python,
+    basicstyle=\ttfamily\tiny,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    morekeywords={random_state, max_iter, n_neighbors},
+    frame=single,
+    showstringspaces=false
+}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue
+}
 
 \title{Pattern Recognition and Machine Learning Assignment}
-\author{Ioannis Michalainas, Maria Charisi}
+\author{Ioannis Michalainas, Maria Charisi \\
+    \href{https://github.com/ioannisam/PR-ML}{Github Repo}
+}
 \date{December 2024}
 
 \setbeamertemplate{footline}[frame number]
@@ -335,102 +359,297 @@ In conclusion, increasing $\gamma$ up to 0.4 seems to benefit our algorithm, but
 
 \begin{frame}
 \frametitle{PART D}
-This is the introduction slide.
+In this part, our task is to use datasetTV.csv to train a classifier of our choosing, which will be tested with datasetTest.csv. We are dealing with a classification problem with the following characteristics:
+\begin{itemize}
+    \item 5-class classification problem
+    \item 8743 training samples
+    \item 224 features
+\end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{2}
+\frametitle{Data Visualization}
+Our first move was to attempt to visualize our data. Since our data lie in high-dimensional space, it would be impossible to illustrate it. So, we performed PCA (dimensionality reduction) and projected the dataset in the 3D space, in an attempt to draw conclusions from the visual. 
+\end{frame}
+
+\begin{frame}
+\frametitle{Data Visualization}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{assets/datasetTV.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Kernel Search}
+The visual representation is not of great help, but is a starting point for our analysis. 
+
+Our next attempt was to find a kernel in hopes that the dataset is \textbf{linear separable}. That would make approaches like:
+\begin{itemize}
+    \item SVM
+    \item Logistic Regression
+    \item Naive Bayes
+\end{itemize}
+suitable for our classifier.
+\end{frame}
+
+\begin{frame}
+\frametitle{Silhouette Score}
+In order to check whether the transformed kernel data is linearly separable, we will use the \textbf{silhouette score} as a metric. 
+The silhouette score quantifies how well a data point fits into its class and ranges from -1 to 1:
+\begin{itemize}
+    \item  1: Perfectly matched to its class (linearly separable classes).
+    \item  0: On the boundary between classes.
+    \item -1: Misclassified, closer to another class (non-linearly separable classes).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Results}
+The silhouette score for the original dataset is 0.01.
+\vspace{0.5cm}
+\begin{table}[ht]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Kernel} & \textbf{$\gamma$: 0.001} & \textbf{$\gamma$: 0.01} & \textbf{$\gamma$: 0.1} & \textbf{$\gamma$: 1} & \textbf{$\gamma$: 10} \\ \midrule
+\textbf{rbf}     & 0.03                 & 0.03                & -0.37              & -0.03            & -0.03            \\
+\textbf{poly}    & 0.03                 & -0.00               & -0.07              & -0.09            & -0.09            \\
+\textbf{sigmoid} & 0.03                 & 0.03                & 0.03               & 0.03             & 0.04             \\
+\textbf{cosine}  & 0.04                 & 0.04                & 0.04               & 0.04             & 0.04             \\ \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Silhouette Scores for Different Kernels and $\gamma$ Values}
+\label{tab:silhouette_scores}
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conclusions}
+As we can see from the above results, the silhouette scores of the original and transformed data range from -0.37 to 0.04. This indicates that our data are not linearly separable.
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing Multiple Classifiers}
+To verify our hypothesis about the poor performance of linear approaches, we conducted a general search for the optimal classifier, using some default and generic parameters so that we get an idea of what performs best for our dataset.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Models}
+These are the models we tested with their respective parameters: \vspace{0.5cm}
+\lstset{style=PythonStyle}
+\begin{lstlisting}
+"Decision Tree": DecisionTreeClassifier(random_state=42),
+    
+"KNN(5NN)": KNeighborsClassifier(n_neighbors=5),
+"Naive Bayes": GaussianNB(),
+
+"Logistic Regression": LogisticRegression(max_iter=300, random_state=42),
+"Perceptron": Perceptron(max_iter=300, random_state=42),
+"Least Squares": RidgeClassifier(),
+
+"SVM": SVC(kernel='linear', random_state=42),
+
+"Neural Network": MLPClassifier(
+    hidden_layer_sizes=(100,), max_iter=300, random_state=42),
+
+"Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+
+"AdaBoost": AdaBoostClassifier(n_estimators=100, random_state=42)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{Cross-Validation Accuracy}
+To test the performance of every model we used \textbf{5-fold cross validation}:
+\begin{itemize}
+    \item The dataset is randomly divided into 5 equal parts (or folds). Each fold is used once as a test set while, the other 4 are used for training.
+    \item For each iteration, the model is trained on the training set and its accuracy is evaluated on the test set.
+    \item Once all 5 iterations are complete, calculate the average of the accuracies from all folds to get the cross-validation accuracy.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{5-Fold Cross-Validation}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/cross-validation.png}
+    \caption{5-fold Cross Validation}
+    \label{fig:enter-label}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Results}
+
+\begin{table}[ht]
+\centering
+\label{tab:cross_validation_accuracy}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Model} & \textbf{Cross-Validation Accuracy} \\ \midrule
+Decision Tree      & 0.62 \\
+KNN(5NN)           & 0.81 \\
+Naive Bayes        & 0.70 \\
+Logistic Regression & 0.77 \\
+Perceptron         & 0.69 \\
+Least Squares      & 0.75 \\
+SVM                & 0.76 \\
+Neural Network     & 0.83 \\
+Random Forest      & 0.80 \\
+AdaBoost           & 0.65 \\ \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Cross-Validation Accuracy for Different Models}
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{Candidates}
+Out of all the classifiers we tested, we separated the
+\begin{itemize}
+    \item k-Nearest Neighbors
+    \item Random Forest 
+    \item Neural Network
+\end{itemize} 
+classifiers as the best scoring in terms of accuracy. \vspace{0.5cm}
+
+These results align with our hypothesis that our data are not linear separable. Our goal now is to tune the parameters of said classifiers, in order to maximize the cross-validation accuracy and decide on our final model. To do so we performed a grid search for each one of them.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{KNN Tuning}
+\lstset{style=PythonStyle}
+\begin{lstlisting}
+param_grid = {
+    'n_neighbors': [3, 5, 7, 9, 11],
+    'weights': ['uniform', 'distance'],
+    'metric': ['euclidean', 'manhattan', 'minkowski', 'cosine'],
+    'p': [1, 2],
+    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']
+}
+\end{lstlisting}
+Best cross-validation accuracy: \textbf{0.83} \\
+Best parameters found: 
+\begin{itemize}
+    \item 'n\_neighbors': 9
+    \item 'weights': 'distance'
+    \item 'metric': 'cosine'
+    \item 'p': 1
+    \item 'algorithm': 'auto'
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{RF Tuning}
+\lstset{style=PythonStyle}
+\begin{lstlisting}
+param_grid = {
+    'n_estimators': [200, 300, 400, 500],
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [10, 20, 50, None],
+    'min_samples_split': [5, 10, 20],
+    'min_samples_leaf': [2, 5, 10],
+    'class_weight': ['balanced', None],
+    'max_features': ['auto', 'sqrt', 'log2'],
+    'bootstrap': [True, False]
+}
+\end{lstlisting}
+Best cross-validation accuracy: \textbf{0.83} \\
+Best parameters found: 
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item \texttt{'n\_estimators'}: 500
+            \item \texttt{'criterion'}: 'entropy'
+            \item \texttt{'max\_depth'}: 20
+            \item \texttt{'min\_samples\_split'}: 5
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item \texttt{'min\_samples\_leaf'}: 2
+            \item \texttt{'algorithm'}: 'auto'
+            \item \texttt{'class\_weight'}: 'balanced'
+            \item \texttt{'max\_features'}: 'sqrt'
+            \item \texttt{'bootstrap'}: False
+        \end{itemize}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{NN Tuning}
+\lstset{style=PythonStyle}
+\begin{lstlisting}
+param_grid = {
+    'hidden_layer_sizes': [(50,), (100,), (200,), (100, 50), (100, 100)],
+    'activation': ['relu', 'tanh'],
+    'solver': ['adam', 'sgd', 'lbfgs'],
+    'alpha': [0.0001, 0.001, 0.01],
+    'learning_rate': ['constant', 'adaptive'],
+    'learning_rate_init': [0.001, 0.01, 0.0001],
+    'early_stopping': [True, False],
+    'max_iter': [200, 300, 500]
+}
+\end{lstlisting}
+Best cross-validation accuracy: \textbf{0.84} \\
+Best parameters found:
+\begin{columns}
+    \begin{column}{0.45\textwidth}
+        \begin{itemize}
+            \item \texttt{'hidden\_layer\_sizes'}: (200,)
+            \item \texttt{'activation'}: 'relu'
+            \item \texttt{'solver'}: 'adam'
+            \item \texttt{'alpha'}: 0.0001
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.55\textwidth}
+        \begin{itemize}
+            \item \texttt{'learning\_rate'}: 'constant'
+            \item \texttt{'learning\_rate\_init'}: 0.01
+            \item \texttt{'early\_stopping'}: False
+            \item \texttt{'max\_iter'}: 200
+        \end{itemize}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Optimal Model}
+As we can observe, the model that achieves the best cross-validation accuracy for the training set is a Neural Network with the following characteristics:
+\vspace{0.5cm}
+\begin{itemize}
+    \item One hidden layer with 200 neurons
+    \item ReLU activation function\[\text{ReLU}(x) = \max(0, x)\]
+    \item Adam optimizer for weight updates
+    \item Constant learning rate with an initial value of $\eta = 0.01$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Data Scaling}
+Although, before fitting the model to our data, we must preprocess it. First, we will \textbf{scale} the data, as this step is essential for models like neural networks.
+\vspace{0.5cm}
+
+Scaling improves the convergence of gradient descent and ensures that features with larger numerical ranges do not dominate the learning process.
 
 \end{frame}
 
 \begin{frame}
-\frametitle{3}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{4}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{5}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{6}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{7}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{8}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{9}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{10}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{11}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{12}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{13}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{14}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{15}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{16}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{17}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{18}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{19}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{20}
-
+\frametitle{Feature Selection}
+Moreover, our data lies in a high-dimensional space (224 dimensions), so we decided to use \textbf{feature selection}. Specifically, we used a correlation-based technique to discard features with low correlation to the label, as these are unlikely to provide meaningful information for the classification task. Using feature selection offers the following benefits:
+\vspace{0.5cm}
+\begin{itemize}
+    \item Reduce noise in the data
+    \item Decreases the risk of \textbf{overfitting} because the model focuses on learning the underlying patterns rather than memorizing noise
+    \item Improves computational efficiency
+\end{itemize}
 \end{frame}
 
 \end{document}
