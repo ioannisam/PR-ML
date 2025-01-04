@@ -4,22 +4,21 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
 
-file_path = os.path.join(os.path.dirname(__file__), '../datasets/datasetTV.csv')
+TRAIN_DATA = os.path.join(os.path.dirname(__file__), '../datasets/datasetTV.csv')
 NUM_FEATURES = 224
-TRAIN_DATA = file_path
 
-# Load dataset
+# load dataset
 train = pd.read_csv(TRAIN_DATA, header=None)
 feature_columns = [f'feature_{i+1}' for i in range(NUM_FEATURES)]
 train.columns = feature_columns + ['label']
 X_train = train[feature_columns]
 y_train = train['label']
 
-# Standardize features
+# standardize features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 
-# Define the parameter grid to search
+# define parameter grid to search
 param_grid = {
     'n_neighbors': [3, 5, 7, 9, 11],
     'weights': ['uniform', 'distance'],
@@ -28,10 +27,10 @@ param_grid = {
     'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']
 }
 
-# Initialize the KNeighborsClassifier
+# initialize KNeighborsClassifier
 model = KNeighborsClassifier()
 
-# Perform grid search
+# perform Grid Search
 grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
 grid_search.fit(X_train_scaled, y_train)
 

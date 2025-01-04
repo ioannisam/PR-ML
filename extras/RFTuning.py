@@ -4,22 +4,21 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-file_path = os.path.join(os.path.dirname(__file__), '../datasets/datasetTV.csv')
+TRAIN_DATA = os.path.join(os.path.dirname(__file__), '../datasets/datasetTV.csv')
 NUM_FEATURES = 224
-TRAIN_DATA = file_path
 
-# Load dataset
+# load dataset
 train = pd.read_csv(TRAIN_DATA, header=None)
 feature_columns = [f'feature_{i+1}' for i in range(NUM_FEATURES)]
 train.columns = feature_columns + ['label']
 X_train = train[feature_columns]
 y_train = train['label']
 
-# Standardize features
+# standardize features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 
-# Define the parameter grid to search
+# define parameter grid to search
 param_grid = {
     'n_estimators': [200, 300, 400, 500],
     'criterion': ['gini', 'entropy'],
@@ -31,10 +30,10 @@ param_grid = {
     'bootstrap': [True, False]
 }
 
-# Initialize the RandomForestClassifier
+# initialize RandomForestClassifier
 model = RandomForestClassifier(random_state=42, n_jobs=-1)
 
-# Perform grid search
+# perform Grid Search
 grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=1)
 grid_search.fit(X_train_scaled, y_train)
 
