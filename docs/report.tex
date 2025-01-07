@@ -41,14 +41,14 @@
 % PART A%
 
 \frametitle{PART A}
-In this part, our study involves the quantification of levels of stress of video game players. Our task in is to implement a Maximum Likelihood Estimator to diversify between two classes $\omega_1$ (stress) and $\omega_2$ (no stress). We need to be able to accurately classify a player based on his play-style as either stressed or not stressed (binary classification).
+In this part, our study involves the quantification of levels of stress of video game players. Our task in this part is to implement a Maximum Likelihood Estimator to diversify between two classes $\omega_1$ (stress) and $\omega_2$ (no stress). We need to be able to accurately classify a player based on his play-style as either stressed or not stressed (binary classification).
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Data}
 
-To perform our analysis we use the following data 
+To perform our analysis we use the following data: 
 \begin{itemize}
     \item The Probability Density Function (PDF given $\theta$)$$ p(x \mid \theta) = \frac{\pi}{1 + (x - \theta)^2} $$
     \item Training Sets $D_1$ and $D_2$ for both classes ($\omega_1$, $\omega_2$)
@@ -73,12 +73,12 @@ Instead, we take a simpler approach:
     \item Define a range of candidate $\theta$ values that likely contains the true $\theta$.
     \item Evaluate the log-likelihood function for these candidates and select the $\theta$ that maximizes it.
 \end{itemize}
-Since the data range spans approximately [-4.5, 4.1], we select a slightly wider candidate range for $\theta$, such as [-5, 5], to ensure it includes the optimal value.
+Since the data range spans approximately [-4.5, 4.1], we select a slightly wider candidate range for $\theta$ [-5, 5], to ensure it includes the optimal value.
 \end{frame}
 
 \begin{frame}
 \frametitle{Plot}
-$\hat{\theta_1}$ estimation:  2.60
+$\hat{\theta_1}$ estimation:  2.60\\
 $\hat{\theta_2}$ estimation: -3.16
 \begin{figure}
     \centering
@@ -90,7 +90,7 @@ $\hat{\theta_2}$ estimation: -3.16
 
 \begin{frame}
 \frametitle{A2}
-Now, we need to use Discriminant Function $$ g(x) = \log P(x \mid \hat{\theta}_1) - \log P(x \mid \hat{\theta}_2) + \log P(\omega_1) - \log P(\omega_2) $$ to classify our data.
+Now, we need to use the Discriminant Function $$ g(x) = \log P(x \mid \hat{\theta}_1) - \log P(x \mid \hat{\theta}_2) + \log P(\omega_1) - \log P(\omega_2) $$ to classify our data.
 \end{frame}
 
 \begin{frame}
@@ -101,9 +101,8 @@ We calculate the \textit{a priori probabilities} for each class $\omega_i$. We h
     \item 5 classified in $\omega_2$
 \end{itemize}
 \vspace{0.5cm}
-So we calculate $P(\omega_1)=7/12$ and $P(\omega_2)=5/12$ 
+So, we calculate $P(\omega_1)=7/12$ and $P(\omega_2)=5/12$.
 \end{frame}
-
 
 \begin{frame}
 \frametitle{Plot}
@@ -147,7 +146,6 @@ The classification rule leads to some misclassifications. While the decision rul
 In this part our task is to implement a new classifier for the previous problem, this time using Bayesian Estimation to estimate parameter $\theta$. 
 \end{frame}
 
-
 \begin{frame}
 \frametitle{Data}
 
@@ -161,7 +159,7 @@ To perform our analysis we use the following data:
 
 \begin{frame}
 \frametitle{B1}
-In this part, our goal is to calculate the a posteriori probability of $\theta$,
+In this part, our goal is to calculate the \textit{a posteriori} probability of $\theta$:
 $$
 p(\theta \mid D) = \frac{p(D \mid \theta) \cdot p(\theta)}{\int_{-\infty}^{\infty} p(D \mid \theta) \cdot p(\theta) \, d\theta}
 $$
@@ -170,8 +168,8 @@ $$
 \begin{frame}
 \frametitle{$\theta$ Candidates}
 \begin{itemize}
-    \item In Part A, the dataset values were relatively small ([-4.5, 4.1]). Using a range of [-5, 5] was a practical choice because it encompassed the likely $\theta$ values where the likelihood peaks.
-    \item In Part B, the prior distribution has a broader support ($(\theta / 10)$ in the denominator suggests a wider possible range). To ensure the posterior distribution adequately integrates both the likelihood and the prior, we expanded the range to [-10, 10].
+    \item In Part A, the dataset values were relatively small [-4.5, 4.1]. Using a range of [-5, 5] was a practical choice because it encompassed the likely $\theta$ values where the likelihood peaks.
+    \item In Part B, the prior distribution has a broader support ($\theta / 10$ in the denominator suggests a wider possible range). To ensure the posterior distribution adequately integrates both the likelihood and the prior, we expanded the range to [-10, 10].
 \end{itemize}
 
 \end{frame}
@@ -309,7 +307,7 @@ In this task, we extend our classification of the three Iris species using a \te
 
 \begin{frame}
 \frametitle{Optimal Depth}
-Our goal is yet again to find the optimal depth with respect to \textit{accuracy}. To do so, we iterate in a range of possible depths (1,10), where the optimal depth should lie.
+Our goal (yet again) is to find the optimal depth with respect to \textit{accuracy}. To do so, we iterate in a range of possible depths (1,10), where the optimal depth should lie.
 \end{frame}
 
 \begin{frame}
@@ -387,7 +385,7 @@ Our first move was to attempt to visualize our data. Since our data lie in high-
 \frametitle{Kernel Search}
 The visual representation is not of great help, but is a starting point for our analysis. 
 
-Our next attempt was to find a kernel in hopes that the dataset is \textbf{linear separable}. That would make approaches like:
+Our next attempt was to find a kernel in hopes that the dataset is \textbf{linear separable}. That would make approaches like
 \begin{itemize}
     \item SVM
     \item Logistic Regression
@@ -511,7 +509,7 @@ AdaBoost           & 0.65 \\ \bottomrule
 
 \begin{frame}
 \frametitle{Candidates}
-Out of all the classifiers we tested, we separated the
+Out of all the classifiers we tested, we separated
 \begin{itemize}
     \item k-Nearest Neighbors
     \item Random Forest 
@@ -635,7 +633,7 @@ As we can observe, the model that achieves the best cross-validation accuracy fo
 
 \begin{frame}
 \frametitle{Data Scaling}
-Although, before fitting the model to our data, we must preprocess it. First, we will \textbf{scale} the data, as this step is essential for models like neural networks.
+Although, before fitting the model to our data, we must preprocess it. First, we \textbf{scale} the data, as this step is essential for models like neural networks.
 \vspace{0.5cm}
 
 Scaling improves the convergence of gradient descent and ensures that features with larger numerical ranges do not dominate the learning process.
